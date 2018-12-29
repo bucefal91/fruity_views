@@ -1,0 +1,7 @@
+name: 'Fruity views'
+description: 'Example of integration with Views.'
+core: '8.x'
+package: 'Fruity'
+type: module
+dependencies:
+  - drupal:views
