@@ -1,0 +1,66 @@
+# Schema for filter 'fruit_weight'.
+
+# Views module takes the below definitions and 'plugs' them in at the right
+# spots of whichever view that uses corresponding handlers. So our mission as
+# developers is to properly describe the metadata of handlers we have actually
+# coded (in fact, only those handlers that make active use of $this->options).
+
+# In order to do so, we annotate filters' metadata under
+# views.filter.[plugin_id_of_the_filter_we_are_describing], and respectively
+# any other handler type just changing the 'filter' to the actual handler type
+# in question. See the contents of ./core/modules/views/config/schema for
+# details. That's where Views describe metadata of all handlers it ships on its
+# own.
+views.filter.fruit_weight:
+# Views module has kindly defined a type 'views_filter' which assumes most of
+# the metadata for any filter. Our job then reduces to just extending it with
+# a few more properties that we have additionally introduced.
+  type: views_filter
+  label: 'Unit aware weight filter'
+  mapping:
+    value:
+      type: mapping
+      label: 'Filter criteria'
+      mapping:
+        value:
+          type: float
+          label: 'Absolute value'
+        unit:
+          type: string
+          label: 'Weight units'
+    precision:
+      type: integer
+      label: 'Precision of float point comparison'
+
+# Schema for argument 'fruit_weight'.
+
+# Mostly the same logic applies to arguments. We just place the metadata under
+# views.argument.[plugin_id_of_the_argument_we_are_describing] and reuse the
+# type 'views_argument' which again describes most of the options any argument
+# handler uses. We only extend it with those additional properties we have
+# introduced ourselves in our particular argument handler we are describing
+# here.
+views.argument.fruit_weight:
+  type: views_argument
+  label: 'Unit aware weight argument'
+  mapping:
+    precision:
+      type: integer
+      label: 'Precision of float point comparison'
+
+# Schema for argument validator 'number_ends_with'.
+
+# Argument validators are somewhat simpler. Views module does not define any
+# 'pre-fabricated' type for argument validators, so we use 'mapping' and
+# describe the actual properties our argument validator handler actually
+# articulates.
+views.argument_validator.number_ends_with:
+  type: mapping
+  label: '"Number ends with" argument validator'
+  mapping:
+    white_list:
+      type: sequence
+      label: 'White list of allowed suffixes'
+      sequence:
+        type: string
+        label: 'An allowed suffix'

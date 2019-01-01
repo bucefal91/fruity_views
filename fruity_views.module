@@ -133,5 +133,130 @@ function fruity_views_views_data() {
     ],
   ];
 
+  $views_data['fruit_relations']['fruit_id_related'] = [
+    // To communicate to Views that this column may act as a parting point for
+    // a relationship, utilize the key 'relationship' (that was pretty obvious,
+    // wasn't it?).
+    'relationship' => [
+      // The actual PHP class that corresponds to "standard" is
+      // \Drupal\views\Plugin\views\relationship\Standard. Have a look around it
+      // (well, around its parent because the Standard class only inherits an
+      // abstract parent that does all power lifting).
+      'id' => 'standard',
+      // Supply name of the new base table this relationship is introducing. In
+      // this tutorial I made it intentional that a 'fruit' base table
+      // establishes relationship to itself, i.e. another 'fruit' base table.
+      // This way I sought to demonstrate that relationships literally can
+      // introduce any base table (as long as there is a way to JOIN the new
+      // base table and base table is properly declared to Views).
+      'base' => 'fruit',
+
+      // You could specify the key 'base field' if your relationship implies
+      // joining on non-primary key column. In our case, however, we do join on
+      // primary key, so leaving out this key is equivalent to supplying the
+      // below:
+      'base field' => 'id',
+
+      // This label will be visible across multiple spots in the Views UI. Site
+      // builder will be given an option to override it though, so do not kill
+      // yourself picking up the pretty name. I know, in programming there are 2
+      // hard things: cache invalidation and naming things.
+      'label' => t('Related (sweeter or bigger) fruit'),
+
+      // In case you want more than 1 condition in the JOIN ON clause, then use
+      // 'extra' key here.
+      'extra' => [
+        // Some additional conditions. See the docblock comment of
+        // \Drupal\views\Plugin\views\join\JoinPluginBase for actual possible
+        // values. In fact it's very robust and covers 99% of use cases.
+      ],
+    ],
+  ];
+
+  // Let's introduce a 'virtual' Views column called
+  // 'fruit_id_related_sweeter_than' within the 'fruit_relations' table and
+  // place the relationship of "sweeter than" into it.
+  $views_data['fruit_relations']['fruit_id_related_sweeter_than'] = [
+    'title' => t('Sweeter than fruit'),
+    'help' => t('A fruit that is sweeter than the current one.'),
+    'relationship' => [
+      // The mechanics of this relationship still stay the same, i.e. pretty
+      // straight forward SQL JOIN, hence we still use the "standard"
+      // relationship handler.
+      'id' => 'standard',
+
+      // Our relationship still points to the 'fruit' base table.
+      'base' => 'fruit',
+
+      // Since this relationship belongs to a 'virtual' column
+      // 'fruit_id_related_sweeter_than', we now have to specify the real DB
+      // column it should operate against. Whenever 'real field' is missing
+      // among the definition items, Views module assumes the Views column
+      // matches the actual DB column name. Whenever we are using 'virtual'
+      // Views columns, we then must specify the key 'real field'.
+      'real field' => 'fruit_id_related',
+
+      // Let's give it a more specific name.
+      'label' => t('Sweeter than fruit'),
+
+      // If we kept is as is, we would be JOINing both sweeter & bigger fruits.
+      // However, this is not what we intend to do here. We need additional
+      // conditions within the JOIN ON clause to make sure we JOIN in
+      // exclusively the 'sweeter than' relations. This is exactly where 'extra'
+      // key comes in handy:
+      'extra' => [
+        [
+          // Name of a column in 'fruit_relations' table that should participate
+          // in this extra JOIN condition.
+          'left_field' => 'relation',
+          // Actual value our 'left_field' column gets compared to.
+          'value' => 'sweeter',
+        ],
+      ],
+    ],
+  ];
+
+  // We shall now repeat literally same thing but for the 'bigger than'
+  // relation, just renaming sweeter to bigger whenever appropriate.
+  $views_data['fruit_relations']['fruit_id_related_bigger_than'] = [
+    'title' => t('Bigger than fruit'),
+    'help' => t('A fruit that is bigger than the current one.'),
+    'relationship' => [
+      // The mechanics of this relationship still stay the same, i.e. pretty
+      // straight forward SQL JOIN, hence we still use the "standard"
+      // relationship handler.
+      'id' => 'standard',
+
+      // Our relationship still points to the 'fruit' base table.
+      'base' => 'fruit',
+
+      // Since this relationship belongs to a 'virtual' column
+      // 'fruit_id_related_bigger_than', we now have to specify the real DB
+      // column it should operate against. Whenever 'real field' is missing
+      // among the definition items, Views module assumes the Views column
+      // matches the actual DB column name. Whenever we are using 'virtual'
+      // Views columns, we then must specify the key 'real field'.
+      'real field' => 'fruit_id_related',
+
+      // Let's give it a more specific name.
+      'label' => t('Bigger than fruit'),
+
+      // If we kept is as is, we would be JOINing both sweeter & bigger fruits.
+      // However, this is not what we intend to do here. We need additional
+      // conditions within the JOIN ON clause to make sure we JOIN in
+      // exclusively the 'bigger than' relations. This is exactly where 'extra'
+      // key comes in handy:
+      'extra' => [
+        [
+          // Name of a column in 'fruit_relations' table that should participate
+          // in this extra JOIN condition.
+          'left_field' => 'relation',
+          // Actual value our 'left_field' column gets compared to.
+          'value' => 'bigger',
+        ],
+      ],
+    ],
+  ];
+
   return $views_data;
 }
